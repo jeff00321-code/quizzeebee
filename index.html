@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>QuizzyBee 🐝 — Fun Learning for Little Ones!</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Boogaloo&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ═══ NAVBAR ═══ -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-wrap">
+      <a href="index.html" class="logo">
+        <div class="logo-bee">🐝</div>
+        <span>QuizzyBee</span>
+      </a>
+      <div class="nav-links">
+        <a href="#how">How It Works</a>
+        <a href="#demo">Try a Quiz</a>
+        <a href="#safety">Safety</a>
+      </div>
+      <div class="nav-actions">
+        <a href="pages/login.php" class="btn-ghost">Log In</a>
+        <a href="pages/signup.php" class="btn-honey">Get Started 🚀</a>
+      </div>
+      <button class="burger" id="burger">
+        <div></div><div></div><div></div>
+      </button>
+    </div>
+    <div class="mobile-nav" id="mobileNav">
+      <a href="#how">How It Works</a>
+      <a href="#demo">Try a Quiz</a>
+        <a href="pages/login.php">Log In</a>
+      <a href="pages/signup.php" class="btn-honey">Get Started 🚀</a>
+    </div>
+  </nav>
+
+  <!-- ═══ HERO ═══ -->
+  <section class="hero">
+    <div class="hero-bubbles">
+      <div class="bubble b1"></div>
+      <div class="bubble b2"></div>
+      <div class="bubble b3"></div>
+      <div class="bubble b4"></div>
+    </div>
+    <div class="hero-content">
+      <div class="hero-left">
+        <span class="hero-pill">✨ 5 fun questions per quiz!</span>
+        <h1>Learning Is <em>More Fun</em> When It Feels Like Play!</h1>
+        <p>Colorful picture-based quizzes for tiny learners aged <strong>0–5</strong>. Just 5 questions — short, sweet and perfect for little attention spans!</p>
+        <div class="hero-btns">
+          <a href="#demo" class="btn-honey btn-big"><span>🎮</span> Play a Free Quiz</a>
+          <a href="#how" class="btn-outline btn-big">See How It Works</a>
+        </div>
+        <div class="hero-trust">
+          <span>⭐ 4.9 Stars</span>
+          <span class="dot">·</span>
+          <span>🛡️ COPPA Safe</span>
+          <span class="dot">·</span>
+          <span>🚫 Zero Ads</span>
+          <span class="dot">·</span>
+          <span>👨‍👩‍👧 50K+ Families</span>
+        </div>
+      </div>
+      <div class="hero-right">
+        <div class="phone-frame">
+          <div class="phone-screen">
+            <div class="mini-quiz">
+              <div class="mini-q-num">Question 1 of 5 🐝</div>
+              <div class="mini-q-text">Which animal is a DOG?</div>
+              <div class="mini-opts">
+                <button class="mini-opt" onclick="heroTap(this,true)">🐶</button>
+                <button class="mini-opt" onclick="heroTap(this,false)">🐱</button>
+                <button class="mini-opt" onclick="heroTap(this,false)">🐸</button>
+                <button class="mini-opt" onclick="heroTap(this,false)">🐧</button>
+              </div>
+              <div class="mini-result" id="miniResult"></div>
+            </div>
+          </div>
+          <div class="phone-home-bar"></div>
+        </div>
+        <div class="floaty f1">⭐</div>
+        <div class="floaty f2">🌟</div>
+        <div class="floaty f3">🎉</div>
+        <div class="mascot-wrap">
+          <div class="mascot">🐝</div>
+          <div class="speech-bubble">5 questions = big fun!</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ STRIP ═══ -->
+  <div class="strip">
+    <div class="strip-inner">
+      <span class="strip-label">Featured In</span>
+      <div class="strip-logos">
+        <span>👩‍👧 MomLife Mag</span>
+        <span>🏫 EduKids Hub</span>
+        <span>📱 AppReview Daily</span>
+        <span>🌟 ParentChoice</span>
+        <span>🎓 LearnPlay Blog</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ HOW IT WORKS ═══ -->
+  <section class="how-section" id="how">
+    <div class="wrap">
+      <div class="section-tag">Simple as 1-2-3</div>
+      <h2 class="section-h">How QuizzyBee Works</h2>
+      <p class="section-p">Designed for little hands and big imaginations. Every quiz is exactly 5 questions long.</p>
+      <div class="steps-row">
+        <div class="step-card">
+          <div class="step-num">1</div>
+          <div class="step-icon">👶</div>
+          <h3>Pick a Topic</h3>
+          <p>Parent selects a fun category — Animals, Colors, Shapes, Numbers, or Fruits!</p>
+        </div>
+        <div class="step-arrow">→</div>
+        <div class="step-card">
+          <div class="step-num">2</div>
+          <div class="step-icon">👆</div>
+          <h3>Tap the Answer</h3>
+          <p>Child taps one of 4 big colorful images. No reading needed — just tap!</p>
+        </div>
+        <div class="step-arrow">→</div>
+        <div class="step-card">
+          <div class="step-num">3</div>
+          <div class="step-icon">🏆</div>
+          <h3>Celebrate!</h3>
+          <p>After all 5 questions, confetti flies and stars rain down — every child wins!</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ FEATURES ═══ -->
+  <section class="features-section">
+    <div class="wrap">
+      <div class="section-tag">Why Parents Love Us</div>
+      <h2 class="section-h">Built for Tiny Learners</h2>
+      <div class="feats-grid">
+        <div class="feat-card fc1">
+          <div class="feat-ico">🖼️</div>
+          <h3>Picture-Only Answers</h3>
+          <p>All 4 answer choices are big emoji images. Zero reading required — perfect for ages 0–5.</p>
+        </div>
+        <div class="feat-card fc2">
+          <div class="feat-ico">5️⃣</div>
+          <h3>Exactly 5 Questions</h3>
+          <p>Short enough to keep attention, long enough to feel like an achievement!</p>
+        </div>
+        <div class="feat-card fc3">
+          <div class="feat-ico">💛</div>
+          <h3>No "Wrong" — Ever</h3>
+          <p>Incorrect taps gently bounce and invite a retry. No red X's, no sad faces, ever.</p>
+        </div>
+        <div class="feat-card fc4">
+          <div class="feat-ico">📊</div>
+          <h3>Parent Dashboard</h3>
+          <p>See scores, time spent, favourite topics. Full visibility from your parent account.</p>
+        </div>
+        <div class="feat-card fc5">
+          <div class="feat-ico">⏱️</div>
+          <h3>Screen Time Limit</h3>
+          <p>Set daily quiz limits. Each quiz = ~3 minutes. You control the screen time.</p>
+        </div>
+        <div class="feat-card fc6">
+          <div class="feat-ico">✈️</div>
+          <h3>Works Offline</h3>
+          <p>Questions cache locally. Great for flights, car rides, and Wi-Fi-free zones.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ DEMO QUIZ ═══ -->
+  <section class="demo-section" id="demo">
+    <div class="wrap">
+      <div class="section-tag">No Sign-Up Needed</div>
+      <h2 class="section-h">Try a 5-Question Quiz Right Now!</h2>
+      <p class="section-p">Pick a topic below and let your little one give it a go!</p>
+
+      <div class="topic-pills">
+        <button class="topic-btn active" onclick="setTopic('animals',this)">🐾 Animals</button>
+        <button class="topic-btn" onclick="setTopic('colors',this)">🎨 Colors</button>
+        <button class="topic-btn" onclick="setTopic('shapes',this)">🔷 Shapes</button>
+        <button class="topic-btn" onclick="setTopic('numbers',this)">🔢 Numbers</button>
+        <button class="topic-btn" onclick="setTopic('fruits',this)">🍎 Fruits</button>
+      </div>
+
+      <!-- Quiz box -->
+      <div class="quiz-box" id="quizBox">
+        <!-- Progress -->
+        <div class="qb-top">
+          <div class="qb-prog-wrap">
+            <div class="qb-prog-bar"><div class="qb-prog-fill" id="progFill"></div></div>
+            <div class="qb-prog-bees" id="progBees">
+              <span class="prog-bee done" id="pb0">🐝</span>
+              <span class="prog-bee" id="pb1">🐝</span>
+              <span class="prog-bee" id="pb2">🐝</span>
+              <span class="prog-bee" id="pb3">🐝</span>
+              <span class="prog-bee" id="pb4">🐝</span>
+            </div>
+          </div>
+          <div class="qb-counter" id="qbCounter">Question 1 of 5</div>
+        </div>
+
+        <!-- Question -->
+        <div class="qb-question" id="qbQuestion">Loading…</div>
+
+        <!-- Options grid -->
+        <div class="qb-opts" id="qbOpts"></div>
+
+        <!-- Feedback -->
+        <div class="qb-feedback" id="qbFeedback"></div>
+      </div>
+
+      <!-- Completion card (hidden until done) -->
+      <div class="quiz-done hidden" id="quizDone">
+        <div class="done-confetti" id="doneConfetti"></div>
+        <div class="done-bee">🐝</div>
+        <h3 id="doneTitle">You're a Star! 🌟</h3>
+        <div class="done-score" id="doneScore"></div>
+        <p id="doneMsg">Amazing work on all 5 questions!</p>
+        <div class="done-stars" id="doneStars"></div>
+        <div class="done-btns">
+          <button class="btn-honey btn-big" onclick="restartDemo()">Play Again 🔄</button>
+          <a href="pages/signup.php" class="btn-outline btn-big">Create Your Account →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══ SAFETY ═══ -->
+  <section class="safety-section" id="safety">
+    <div class="wrap safety-wrap">
+      <div class="safety-text">
+        <div class="section-tag">Safety First</div>
+        <h2 class="section-h">Your Child's Safety is Our #1 Priority</h2>
+        <div class="safety-list">
+          <div class="safety-row">
+            <span class="s-ico">🛡️</span>
+            <div><strong>COPPA Compliant</strong><p>Fully certified under the Children's Online Privacy Protection Act.</p></div>
+          </div>
+          <div class="safety-row">
+            <span class="s-ico">🚫</span>
+            <div><strong>Zero Ads — Ever</strong><p>No ads, no sponsored content. Your child sees only learning content.</p></div>
+          </div>
+          <div class="safety-row">
+            <span class="s-ico">💳</span>
+            <div><strong>No In-App Purchases</strong><p>No locked content, extra charges, or "coins" for kids to find.</p></div>
+          </div>
+          <div class="safety-row">
+            <span class="s-ico">🔒</span>
+            <div><strong>Private Data Promise</strong><p>We never sell or share your child's data. Period.</p></div>
+          </div>
+          <div class="safety-row">
+            <span class="s-ico">👩‍🏫</span>
+            <div><strong>Educator-Reviewed Content</strong><p>Every quiz reviewed by certified early childhood educators.</p></div>
+          </div>
+        </div>
+      </div>
+      <div class="safety-badges">
+        <div class="s-badge">🛡️<br>COPPA<br><small>Certified</small></div>
+        <div class="s-badge">🔒<br>SSL<br><small>Encrypted</small></div>
+        <div class="s-badge">📋<br>GDPR<br><small>Ready</small></div>
+        <div class="s-badge">👩‍🏫<br>Expert<br><small>Approved</small></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ EMAIL LEAD ═══ -->
+  <section class="lead-section">
+    <div class="lead-inner">
+      <div class="lead-bee">🐝</div>
+      <h2>Get a FREE Printable Quiz Pack!</h2>
+      <p>Enter your email and we'll instantly send you a printable quiz pack for ages 3–5.</p>
+      <div class="lead-form" id="leadForm">
+        <input type="email" id="leadEmail" placeholder="your@email.com" class="lead-input" />
+        <button onclick="submitLead()" class="btn-honey">Send My Free Pack 🎁</button>
+      </div>
+      <p class="lead-small">No spam. Unsubscribe anytime.</p>
+    </div>
+  </section>
+
+  <!-- ═══ FINAL CTA ═══ -->
+  <section class="final-section">
+    <div class="final-blobs">
+      <div class="fb1"></div><div class="fb2"></div>
+    </div>
+    <div class="final-inner">
+      <div class="final-bee">🐝</div>
+      <h2>Give Your Little One the Gift of Loving to Learn</h2>
+      <p>Join 50,000+ families and enjoy the full QuizzyBee experience at no cost.</p>
+      <a href="pages/signup.php" class="btn-honey btn-big">Create Free Account 🚀</a>
+      <div class="store-row">
+        <div class="store-pill">📱 App Store</div>
+        <div class="store-pill">🤖 Google Play</div>
+        <div class="store-pill">🌐 Browser</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ FOOTER ═══ -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <a href="index.html" class="logo" style="color:#fff;margin-bottom:12px">
+          <div class="logo-bee">🐝</div><span>QuizzyBee</span>
+        </a>
+        <p>Making learning feel like playtime for little ones aged 0–5. 5 questions at a time.</p>
+        <div class="footer-socials">
+          <a href="#">📘 Facebook</a>
+          <a href="#">📸 Instagram</a>
+          <a href="#">▶️ YouTube</a>
+          <a href="#">📌 Pinterest</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Product</h4>
+        <a href="#how">How It Works</a>
+        <a href="#demo">Free Quiz</a>
+        <a href="pages/login.php">Log In</a>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <a href="#">About Us</a>
+        <a href="#">Blog</a>
+        <a href="#">Careers</a>
+        <a href="#">Contact</a>
+      </div>
+      <div class="footer-col">
+        <h4>Legal</h4>
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+        <a href="#">COPPA Notice</a>
+        <a href="#">Cookie Settings</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2025 QuizzyBee. All rights reserved.</span>
+      <span>Made with 💛 for little learners</span>
+    </div>
+  </footer>
+
+  <script src="landing.js"></script>
+</body>
+</html>
