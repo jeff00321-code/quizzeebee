@@ -1,19 +1,22 @@
 <?php
 include 'config.php';
 session_start();
+header('Content-Type: application/json');
 
-if ($_GET['action'] === 'categories') {
-    $stmt = $pdo->query("SELECT * FROM categories");
-    echo json_encode(["categories" => $stmt->fetchAll()]);
+$action = $_GET['action'] ?? $_POST['action'] ?? '';
+
+if ($action === 'categories') {
+    $stmt = $pdo->query("SELECT id, name FROM categories");
+    echo json_encode(["categories" => $stmt->fetchAll(PDO::FETCH_ASSOC)]);
 }
 
-if ($_GET['action'] === 'start_quiz') {
-    $cat = $_GET['cat'];
-    $child = $_GET['child'];
+if ($action === 'start_quiz') {
+    $cat = $_GET['cat'] ?? 0;
+    $child = $_GET['child'] ?? 0;
 
     $stmt = $pdo->prepare("SELECT * FROM questions WHERE category_id=? ORDER BY RAND() LIMIT 5");
     $stmt->execute([$cat]);
-    $questions = $stmt->fetchAll();
+    $questions = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     $pdo->prepare("INSERT INTO quiz_sessions (child_id, category_id, q1_id, q2_id, q3_id, q4_id, q5_id, score) 
                    VALUES (?,?,?,?,?,?,?,0)")
@@ -22,7 +25,7 @@ if ($_GET['action'] === 'start_quiz') {
     echo json_encode(["questions" => $questions]);
 }
 
-if ($_POST['action'] === 'answer') {
+if ($action === 'answer') {
     $stmt = $pdo->prepare("SELECT correct_answer FROM questions WHERE id=?");
     $stmt->execute([$_POST['question_id']]);
     $correct = $stmt->fetchColumn();
@@ -36,9 +39,9 @@ if ($_POST['action'] === 'answer') {
     echo json_encode(["correct" => $isCorrect]);
 }
 
-if ($_POST['action'] === 'finish') {
+if ($action === 'finish') {
     $stmt = $pdo->prepare("UPDATE quiz_sessions SET score=? WHERE id=?");
     $stmt->execute([$_POST['score'], $_POST['session_id']]);
-    echo json_encode(["ok" => true, "score" => $_POST['score']]);
+    echo json_encode(["status" => "success", "score" => $_POST['score']]);
 }
 ?>

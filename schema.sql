@@ -1,0 +1,58 @@
+-- USERS
+CREATE TABLE users (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(100) NOT NULL,
+  email VARCHAR(255) NOT NULL UNIQUE,
+  password VARCHAR(255) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- CHILD PROFILES
+CREATE TABLE child_profiles (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  name VARCHAR(100) NOT NULL,
+  age INT NOT NULL,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+-- CATEGORIES
+CREATE TABLE categories (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(50) NOT NULL
+);
+
+-- QUESTIONS
+CREATE TABLE questions (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  category_id INT NOT NULL,
+  question_text VARCHAR(255) NOT NULL,
+  correct_answer VARCHAR(50) NOT NULL,
+  option1 VARCHAR(50) NOT NULL,
+  option2 VARCHAR(50) NOT NULL,
+  option3 VARCHAR(50) NOT NULL,
+  option4 VARCHAR(50) NOT NULL,
+  FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE CASCADE
+);
+
+-- QUIZ SESSIONS
+CREATE TABLE quiz_sessions (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  child_id INT NOT NULL,
+  category_id INT NOT NULL,
+  q1_id INT, q2_id INT, q3_id INT, q4_id INT, q5_id INT,
+  score INT DEFAULT 0,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (child_id) REFERENCES child_profiles(id) ON DELETE CASCADE
+);
+
+-- SESSION ANSWERS
+CREATE TABLE session_answers (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  session_id INT NOT NULL,
+  question_id INT NOT NULL,
+  q_position INT NOT NULL,
+  answer_emoji VARCHAR(10) NOT NULL,
+  is_correct BOOLEAN NOT NULL,
+  FOREIGN KEY (session_id) REFERENCES quiz_sessions(id) ON DELETE CASCADE
+);
