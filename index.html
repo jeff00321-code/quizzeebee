@@ -24,21 +24,19 @@
       <a href="#safety">Safety</a>
     </div>
     <div class="nav-actions">
-      <!-- Point to your new form pages -->
-      <a href="login.html" class="btn-ghost">Log In</a>
-      <a href="signup.html" class="btn-honey">Get Started 🚀</a>
-    </div>
+  <button class="btn-ghost" onclick="openModal('loginModal')">Log In</button>
+  <button class="btn-honey" onclick="openModal('signupModal')">Get Started 🚀</button>
+</div>
     <button class="burger" id="burger">
       <div></div><div></div><div></div>
     </button>
   </div>
   <div class="mobile-nav" id="mobileNav">
-    <a href="#how">How It Works</a>
-    <a href="#demo">Try a Quiz</a>
-    <!-- Point to your new form pages -->
-    <a href="login.html">Log In</a>
-    <a href="signup.html" class="btn-honey">Get Started 🚀</a>
-  </div>
+  <a href="#how">How It Works</a>
+  <a href="#demo">Try a Quiz</a>
+  <button onclick="openModal('loginModal')" class="btn-ghost">Log In</button>
+  <button onclick="openModal('signupModal')" class="btn-honey">Get Started 🚀</button>
+</div>
 </nav>
 
 
@@ -235,7 +233,7 @@
         <div class="done-stars" id="doneStars"></div>
         <div class="done-btns">
           <button class="btn-honey btn-big" onclick="restartDemo()">Play Again 🔄</button>
-          <a href="pages/signup.php" class="btn-outline btn-big">Create Your Account →</a>
+          <button onclick="openModal('signupModal')" class="btn-outline btn-big">Create Your Account →</button>
         </div>
       </div>
     </div>
@@ -303,7 +301,7 @@
       <div class="final-bee">🐝</div>
       <h2>Give Your Little One the Gift of Loving to Learn</h2>
       <p>Join 50,000+ families and enjoy the full QuizzyBee experience at no cost.</p>
-      <a href="pages/signup.php" class="btn-honey btn-big">Create Free Account 🚀</a>
+      <button onclick="openModal('signupModal')" class="btn-honey btn-big">Create Free Account 🚀</button>
       <div class="store-row">
         <div class="store-pill">📱 App Store</div>
         <div class="store-pill">🤖 Google Play</div>
@@ -328,11 +326,11 @@
         </div>
       </div>
       <div class="footer-col">
-        <h4>Product</h4>
-        <a href="#how">How It Works</a>
-        <a href="#demo">Free Quiz</a>
-        <a href="pages/login.php">Log In</a>
-      </div>
+  <h4>Product</h4>
+  <a href="#how">How It Works</a>
+  <a href="#demo">Free Quiz</a>
+  <button onclick="openModal('loginModal')" class="btn-ghost">Log In</button>
+</div>
       <div class="footer-col">
         <h4>Company</h4>
         <a href="#">About Us</a>
@@ -353,6 +351,50 @@
       <span>Made with 💛 for little learners</span>
     </div>
   </footer>
+
+
+<!-- Login Modal -->
+<div id="loginModal" class="modal hidden">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal('loginModal')">&times;</span>
+    <div style="font-size:42px;margin-bottom:6px">🐝</div>
+    <h2>Welcome Back!</h2>
+    <p class="modal-subtitle">Log in to your QuizzyBee account</p>
+    <form id="loginForm">
+      <input type="hidden" name="action" value="login">
+      <input type="email"    name="email"    placeholder="📧 Email address" required>
+      <input type="password" name="password" placeholder="🔒 Password"      required>
+      <button type="submit" class="btn-honey">Log In 🚀</button>
+    </form>
+    <div id="loginMessage" class="message"></div>
+    <div class="modal-switch">
+      Don't have an account?
+      <button onclick="closeModal('loginModal');openModal('signupModal')">Sign Up Free →</button>
+    </div>
+  </div>
+</div>
+
+<!-- Signup Modal -->
+<div id="signupModal" class="modal hidden">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal('signupModal')">&times;</span>
+    <div style="font-size:42px;margin-bottom:6px">🐝</div>
+    <h2>Create Account</h2>
+    <p class="modal-subtitle">Join 50K+ families on QuizzyBee — it's free!</p>
+    <form id="signupForm">
+      <input type="hidden"   name="action"   value="register">
+      <input type="text"     name="name"     placeholder="👤 Your name"      required>
+      <input type="email"    name="email"    placeholder="📧 Email address"  required>
+      <input type="password" name="password" placeholder="🔒 Password (min 6 chars)" required>
+      <button type="submit" class="btn-honey">Create Free Account 🚀</button>
+    </form>
+    <div id="signupMessage" class="message"></div>
+    <div class="modal-switch">
+      Already have an account?
+      <button onclick="closeModal('signupModal');openModal('loginModal')">Log In →</button>
+    </div>
+  </div>
+</div>
 
   <script src="landing.js"></script>
 </body>

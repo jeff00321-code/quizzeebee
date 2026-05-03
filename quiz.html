@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>QuizzyBee 🐝 — Let's Play!</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Boogaloo&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* ═══ PAGE BASE ═══ */
+    body {
+      background: var(--cream);
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* ═══ BACKGROUND BLOBS ═══ */
+    .page-blobs {
+      position: fixed; inset: 0;
+      pointer-events: none; z-index: 0;
+    }
+    .blob {
+      position: absolute; border-radius: 50%;
+      filter: blur(80px); opacity: 0.3;
+    }
+    .blob-1 { width:500px;height:500px;background:var(--honey);   top:-120px; right:-100px; }
+    .blob-2 { width:380px;height:380px;background:var(--teal);    bottom:5%;  left:-80px;  }
+    .blob-3 { width:260px;height:260px;background:var(--coral);   top:45%;    left:38%;    }
+    .blob-4 { width:280px;height:280px;background:var(--lavender);bottom:15%; right:8%;    }
+
+    /* ═══ NAVBAR ═══ */
+    .navbar {
+      position: sticky; top: 0; z-index: 900;
+      background: rgba(255,251,240,.93);
+      backdrop-filter: blur(14px);
+      border-bottom: 2px solid #f5e4b0;
+      box-shadow: var(--shadow);
+      position: relative; z-index: 1;
+    }
+    .nav-wrap {
+      max-width: 780px; margin: 0 auto; padding: 0 24px;
+      display: flex; align-items: center; gap: 16px; height: 66px;
+    }
+    .nav-child-chip {
+      margin-left: auto;
+      display: flex; align-items: center; gap: 8px;
+      background: var(--honey-lt);
+      border: 1.5px solid var(--honey);
+      border-radius: var(--r-xl);
+      padding: 6px 16px;
+      font-weight: 800; font-size: 14px; color: var(--honey-dk);
+    }
+    .btn-back {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: transparent;
+      border: 2px solid #e0c870;
+      color: var(--honey-dk);
+      font-family: var(--font-b); font-weight: 700; font-size: 14px;
+      padding: 9px 18px; border-radius: var(--r-xl);
+      cursor: pointer; transition: background .2s;
+      text-decoration: none;
+    }
+    .btn-back:hover { background: var(--honey-lt); }
+
+    /* ═══ MAIN QUIZ AREA ═══ */
+    .quiz-wrap {
+      position: relative; z-index: 1;
+      max-width: 640px; margin: 0 auto;
+      padding: 40px 24px 80px;
+    }
+
+    /* ── Error screen ── */
+    .error-screen {
+      background: var(--white);
+      border-radius: var(--r-lg);
+      border: 2.5px solid var(--coral);
+      padding: 48px 32px;
+      text-align: center;
+      box-shadow: var(--shadow-md);
+    }
+    .error-screen .err-icon { font-size: 60px; margin-bottom: 16px; }
+    .error-screen h2 { font-family: var(--font-h); font-size: 28px; margin-bottom: 12px; color: var(--ink); }
+    .error-screen p  { font-size: 16px; color: #9a7840; margin-bottom: 24px; }
+
+    /* ═══ PROGRESS SECTION ═══ */
+    .progress-section {
+      margin-bottom: 28px;
+    }
+
+    .prog-top {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 10px;
+    }
+    .prog-label {
+      font-family: var(--font-h); font-size: 18px; color: var(--honey-dk);
+    }
+    .prog-counter {
+      font-weight: 800; font-size: 14px; color: #9a7840;
+      background: var(--honey-lt);
+      border: 1.5px solid #f0d088;
+      border-radius: var(--r-xl);
+      padding: 4px 14px;
+    }
+
+    .prog-bar-wrap {
+      height: 14px; background: #f0e4b0;
+      border-radius: 7px; overflow: hidden;
+      border: 1.5px solid #e8d090;
+      margin-bottom: 12px;
+    }
+    .prog-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--honey) 0%, #ffcc44 100%);
+      border-radius: 7px;
+      transition: width .6s cubic-bezier(.4,0,.2,1);
+      width: 0%;
+    }
+
+    .prog-bees {
+      display: flex; justify-content: space-between; padding: 0 4px;
+    }
+    .prog-bee {
+      font-size: 22px;
+      opacity: .25;
+      transition: opacity .4s, transform .4s;
+      filter: grayscale(1);
+    }
+    .prog-bee.done {
+      opacity: 1; filter: none;
+      transform: scale(1.2) translateY(-3px);
+    }
+
+    /* ═══ QUESTION CARD ═══ */
+    .question-card {
+      background: var(--white);
+      border-radius: var(--r-lg);
+      border: 2.5px solid #f0dea0;
+      box-shadow: var(--shadow-md);
+      padding: 36px 32px 32px;
+      margin-bottom: 20px;
+      animation: rise .4s ease;
+    }
+
+    .q-number-pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--honey);
+      color: var(--white);
+      font-family: var(--font-h); font-size: 15px;
+      padding: 5px 18px; border-radius: var(--r-xl);
+      margin-bottom: 18px;
+      box-shadow: 0 3px 0 var(--honey-dk);
+    }
+
+    .question-text {
+      font-family: var(--font-h);
+      font-size: clamp(22px, 4vw, 32px);
+      color: var(--ink);
+      text-align: center;
+      line-height: 1.25;
+      margin-bottom: 28px;
+      min-height: 72px;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    /* ── Options grid ── */
+    .options-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .opt-btn {
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 10px;
+      padding: 20px 12px;
+      background: var(--honey-lt);
+      border: 3px solid #e8d898;
+      border-radius: var(--r-md);
+      cursor: pointer;
+      transition: all .2s;
+      box-shadow: 0 5px 0 #e0c870;
+      font-family: var(--font-b);
+    }
+    .opt-btn:hover:not(.disabled) {
+      transform: translateY(-5px) scale(1.03);
+      box-shadow: 0 10px 0 #e0c870;
+      border-color: var(--honey);
+      background: #fff8e0;
+    }
+    .opt-btn:active:not(.disabled) {
+      transform: translateY(2px);
+      box-shadow: 0 2px 0 #e0c870;
+    }
+    .opt-emoji { font-size: 52px; line-height: 1; }
+    .opt-label {
+      font-size: 14px; font-weight: 800;
+      color: var(--ink);
+    }
+
+    /* ── Answer states ── */
+    .opt-btn.correct {
+      background: var(--green-lt);
+      border-color: var(--green);
+      box-shadow: 0 5px 0 #3aaa52;
+      animation: pop .4s ease;
+    }
+    .opt-btn.wrong {
+      background: var(--coral-lt);
+      border-color: var(--coral);
+      box-shadow: 0 5px 0 #e85050;
+      animation: shake .45s ease;
+    }
+    .opt-btn.reveal-correct {
+      background: var(--green-lt);
+      border-color: var(--green);
+      box-shadow: 0 5px 0 #3aaa52;
+    }
+    .opt-btn.disabled { pointer-events: none; opacity: .7; }
+    .opt-btn.correct.disabled,
+    .opt-btn.reveal-correct.disabled { opacity: 1; }
+
+    /* ═══ FEEDBACK BAR ═══ */
+    .feedback-bar {
+      background: var(--white);
+      border-radius: var(--r-md);
+      border: 2.5px solid #f0dea0;
+      padding: 16px 24px;
+      text-align: center;
+      font-family: var(--font-h);
+      font-size: 22px;
+      color: var(--green);
+      min-height: 62px;
+      display: flex; align-items: center; justify-content: center;
+      transition: all .3s;
+      box-shadow: var(--shadow);
+    }
+    .feedback-bar.wrong-fb { color: var(--honey-dk); }
+
+    /* ═══ COMPLETION SCREEN ═══ */
+    .completion-screen {
+      background: var(--white);
+      border-radius: var(--r-lg);
+      border: 3px solid var(--honey);
+      box-shadow: var(--shadow-lg);
+      padding: 52px 36px 44px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      animation: rise .5s ease;
+    }
+
+    .confetti-wrap {
+      position: absolute; inset: 0;
+      pointer-events: none; overflow: hidden;
+    }
+    .confetti-piece {
+      position: absolute;
+      border-radius: 2px;
+      animation: fall linear forwards;
+      opacity: 0;
+    }
+    @keyframes fall {
+      0%   { opacity:1; top:-10px; transform:rotate(0); }
+      100% { opacity:0; top:110%; transform:rotate(720deg); }
+    }
+
+    .done-bee {
+      font-size: 88px;
+      display: block; margin-bottom: 12px;
+      animation: mascot-fly 5s ease-in-out infinite;
+    }
+
+    .done-title {
+      font-family: var(--font-h);
+      font-size: clamp(30px, 5vw, 46px);
+      color: var(--ink); margin-bottom: 6px;
+    }
+
+    .done-child {
+      font-size: 16px; color: #9a7840;
+      margin-bottom: 20px; font-weight: 700;
+    }
+
+    .score-display {
+      display: inline-flex; flex-direction: column;
+      align-items: center;
+      background: var(--honey-lt);
+      border: 3px solid var(--honey);
+      border-radius: var(--r-lg);
+      padding: 20px 48px;
+      margin-bottom: 20px;
+      box-shadow: 0 6px 0 var(--honey-dk);
+    }
+    .score-number {
+      font-family: var(--font-h);
+      font-size: 72px; color: var(--honey-dk); line-height: 1;
+    }
+    .score-label {
+      font-size: 14px; font-weight: 800;
+      color: #b09050; text-transform: uppercase; letter-spacing: .08em;
+    }
+
+    .done-stars {
+      font-size: 38px; letter-spacing: 6px;
+      margin-bottom: 14px;
+    }
+
+    .done-message {
+      font-size: 18px; color: #7a5c20;
+      margin-bottom: 32px; line-height: 1.6;
+    }
+
+    /* ── Done breakdown (per-question review) ── */
+    .done-breakdown {
+      display: flex; flex-direction: column; gap: 8px;
+      margin-bottom: 32px; text-align: left;
+    }
+    .breakdown-row {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 16px;
+      border-radius: var(--r-sm);
+      font-size: 15px;
+    }
+    .breakdown-row.correct-row { background: var(--green-lt); border: 1.5px solid #8ad8a0; }
+    .breakdown-row.wrong-row   { background: var(--coral-lt); border: 1.5px solid #f0a0a0; }
+    .breakdown-icon { font-size: 20px; flex-shrink: 0; }
+    .breakdown-q { flex: 1; font-weight: 700; color: var(--ink); font-size: 14px; }
+    .breakdown-ans { font-size: 20px; }
+
+    /* ── Done buttons ── */
+    .done-btns {
+      display: flex; flex-wrap: wrap; gap: 14px;
+      justify-content: center;
+    }
+
+    /* ═══ ANIMATIONS ═══ */
+    @keyframes rise  { from {opacity:0;transform:translateY(20px)} to {opacity:1;transform:translateY(0)} }
+    @keyframes pop   { 0%{transform:scale(1)} 50%{transform:scale(1.12)} 100%{transform:scale(1)} }
+    @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-10px)} 75%{transform:translateX(10px)} }
+
+    /* Floating bees */
+    .floaty-bee {
+      position: fixed; font-size: 26px;
+      pointer-events: none; z-index: 0;
+      animation: floaty-anim 6s ease-in-out infinite; opacity: .14;
+    }
+    .floaty-bee.f1 { top:20%; left:2%;  animation-delay:0s; }
+    .floaty-bee.f2 { top:65%; right:2%; animation-delay:2s; }
+
+    @media(max-width:520px) {
+      .options-grid { grid-template-columns: 1fr 1fr; }
+      .opt-emoji    { font-size: 40px; }
+      .question-card { padding: 24px 18px 22px; }
+      .completion-screen { padding: 36px 20px 32px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══ BLOBS + FLOATIES ═══ -->
+<div class="page-blobs">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+  <div class="blob blob-4"></div>
+</div>
+<div class="floaty-bee f1">🐝</div>
+<div class="floaty-bee f2">🐝</div>
+
+<!-- ═══ NAVBAR ═══ -->
+<nav class="navbar">
+  <div class="nav-wrap">
+    <a href="index.html" class="logo">
+      <div class="logo-bee">🐝</div>
+      <span>QuizzyBee</span>
+    </a>
+    <div class="nav-child-chip" id="navChildChip">🎮 Quiz Time!</div>
+    <a href="dashboard.html" class="btn-back">← Dashboard</a>
+  </div>
+</nav>
+
+<!-- ═══ QUIZ WRAP ═══ -->
+<div class="quiz-wrap" id="quizWrap">
+
+  <!-- Error screen (shown if no session data found) -->
+  <div class="error-screen hidden" id="errorScreen">
+    <div class="err-icon">🐝</div>
+    <h2>Oops! No Quiz Found</h2>
+    <p>Looks like you came here directly. Head to the dashboard to start a quiz!</p>
+    <a href="dashboard.html" class="btn-honey btn-big">Go to Dashboard 🚀</a>
+  </div>
+
+  <!-- ── PROGRESS (hidden at start) ── -->
+  <div class="progress-section hidden" id="progressSection">
+    <div class="prog-top">
+      <span class="prog-label" id="progLabel">Question 1 of 5</span>
+      <span class="prog-counter" id="progCounter">1 / 5</span>
+    </div>
+    <div class="prog-bar-wrap">
+      <div class="prog-bar-fill" id="progFill"></div>
+    </div>
+    <div class="prog-bees">
+      <span class="prog-bee" id="pb0">🐝</span>
+      <span class="prog-bee" id="pb1">🐝</span>
+      <span class="prog-bee" id="pb2">🐝</span>
+      <span class="prog-bee" id="pb3">🐝</span>
+      <span class="prog-bee" id="pb4">🐝</span>
+    </div>
+  </div>
+
+  <!-- ── QUESTION CARD ── -->
+  <div class="question-card hidden" id="questionCard">
+    <div class="q-number-pill" id="qNumberPill">🐝 Question 1</div>
+    <div class="question-text"  id="questionText">Loading…</div>
+    <div class="options-grid"   id="optionsGrid"></div>
+  </div>
+
+  <!-- ── FEEDBACK BAR ── -->
+  <div class="feedback-bar hidden" id="feedbackBar"></div>
+
+  <!-- ── COMPLETION SCREEN ── -->
+  <div class="completion-screen hidden" id="completionScreen">
+    <div class="confetti-wrap" id="confettiWrap"></div>
+
+    <span class="done-bee">🐝</span>
+    <h2 class="done-title"  id="doneTitle">Amazing! 🏆</h2>
+    <p  class="done-child"  id="doneChild"></p>
+
+    <div class="score-display">
+      <div class="score-number" id="scoreNumber">5/5</div>
+      <div class="score-label">Your Score</div>
+    </div>
+
+    <div class="done-stars"   id="doneStars"></div>
+    <p   class="done-message" id="doneMessage"></p>
+
+    <!-- Per-question breakdown -->
+    <div class="done-breakdown" id="doneBreakdown"></div>
+
+    <div class="done-btns">
+      <button class="btn-honey btn-big" onclick="playAgain()">Play Again 🔄</button>
+      <a href="dashboard.html" class="btn-outline btn-big">Dashboard 🏠</a>
+    </div>
+  </div>
+
+</div><!-- /quiz-wrap -->
+
+<script>
+/* ════════════════════════════════════════════
+   QuizzyBee — quiz.js (inline)
+   Reads sessionStorage set by dashboard.html,
+   calls php/quiz.php for answer checking & finish.
+════════════════════════════════════════════ */
+
+const TOTAL    = 5;
+const PRAISE   = ['🎉 Amazing!','⭐ You got it!','🌟 Super smart!','🏆 Brilliant!','💛 Correct! Yay!'];
+const CONF_CLR = ['#FFAA00','#FF6B6B','#52C46A','#C9B8FF','#00B8A9','#FFD700'];
+
+let session     = null;   // { session_id, questions, childName }
+let currentIdx  = 0;
+let score       = 0;
+let answered    = false;
+let resultLog   = [];     // { questionText, correct, yourAnswer, correctAnswer }
+
+/* ── Boot ── */
+document.addEventListener('DOMContentLoaded', () => {
+  const raw = sessionStorage.getItem('quizSession');
+
+  if (!raw) {
+    show('errorScreen');
+    return;
+  }
+
+  try {
+    session = JSON.parse(raw);
+  } catch(e) {
+    show('errorScreen');
+    return;
+  }
+
+  if (!session.questions || session.questions.length < TOTAL) {
+    show('errorScreen');
+    return;
+  }
+
+  // Update navbar chip
+  document.getElementById('navChildChip').textContent =
+    `🎮 ${session.childName}'s Quiz`;
+
+  // Show quiz UI
+  show('progressSection');
+  show('questionCard');
+  show('feedbackBar');
+
+  renderQuestion();
+});
+
+/* ─────────────────────────────────────────────
+   RENDER QUESTION
+───────────────────────────────────────────── */
+function renderQuestion() {
+  const q = session.questions[currentIdx];
+
+  // Progress bar
+  const pct = (currentIdx / TOTAL) * 100;
+  document.getElementById('progFill').style.width = pct + '%';
+
+  for (let i = 0; i < TOTAL; i++) {
+    const bee = document.getElementById('pb' + i);
+    if (bee) bee.classList.toggle('done', i < currentIdx);
+  }
+
+  document.getElementById('progLabel').textContent   = `Question ${currentIdx + 1} of ${TOTAL}`;
+  document.getElementById('progCounter').textContent = `${currentIdx + 1} / ${TOTAL}`;
+  document.getElementById('qNumberPill').textContent = `🐝 Question ${currentIdx + 1}`;
+  document.getElementById('questionText').textContent = q.question_text;
+  document.getElementById('feedbackBar').textContent  = '';
+  document.getElementById('feedbackBar').className    = 'feedback-bar';
+
+  // Build options (shuffle)
+  const options = shuffle([
+    { emoji: q.option1, label: q.option1 },
+    { emoji: q.option2, label: q.option2 },
+    { emoji: q.option3, label: q.option3 },
+    { emoji: q.option4, label: q.option4 },
+  ]);
+
+  const grid = document.getElementById('optionsGrid');
+  grid.innerHTML = '';
+  answered = false;
+
+  options.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'opt-btn';
+    btn.innerHTML = `
+      <span class="opt-emoji">${opt.emoji}</span>
+      <span class="opt-label">${opt.label}</span>`;
+    btn.onclick = () => handleAnswer(btn, opt.emoji, grid);
+    grid.appendChild(btn);
+  });
+}
+
+/* ─────────────────────────────────────────────
+   HANDLE ANSWER
+───────────────────────────────────────────── */
+async function handleAnswer(el, chosenEmoji, grid) {
+  if (answered) return;
+  answered = true;
+
+  const q   = session.questions[currentIdx];
+  const all = grid.querySelectorAll('.opt-btn');
+  all.forEach(b => b.classList.add('disabled'));
+
+  const fb = document.getElementById('feedbackBar');
+
+  try {
+    // Ask the server if this answer is correct
+    const body = new URLSearchParams({
+      action:      'answer',
+      session_id:  session.session_id,
+      question_id: q.id,
+      position:    currentIdx + 1,
+      answer:      chosenEmoji
+    });
+
+    const res    = await fetch('php/quiz.php', { method: 'POST', body });
+    const result = await res.json();
+
+    const isCorrect     = result.correct;
+    const correctAnswer = result.correct_answer;
+
+    // Log for the breakdown screen
+    resultLog.push({
+      questionText:  q.question_text,
+      correct:       isCorrect,
+      yourAnswer:    chosenEmoji,
+      correctAnswer: correctAnswer
+    });
+
+    if (isCorrect) {
+      score++;
+      el.classList.add('correct');
+      fb.textContent = praise();
+      fb.className   = 'feedback-bar';
+
+      setTimeout(nextQuestion, 1200);
+
+    } else {
+      el.classList.add('wrong');
+      fb.textContent = '💛 Keep trying — you\'re doing great!';
+      fb.className   = 'feedback-bar wrong-fb';
+
+      // Gently show the correct answer
+      setTimeout(() => {
+        all.forEach(b => {
+          const emoji = b.querySelector('.opt-emoji').textContent;
+          if (emoji === correctAnswer) b.classList.add('reveal-correct');
+        });
+      }, 500);
+
+      setTimeout(nextQuestion, 2000);
+    }
+
+  } catch(e) {
+    // Network error — still move on so child isn't stuck
+    fb.textContent = '⚠️ Oops, connection hiccup!';
+    resultLog.push({
+      questionText: q.question_text,
+      correct: false,
+      yourAnswer: chosenEmoji,
+      correctAnswer: '?'
+    });
+    setTimeout(nextQuestion, 1500);
+  }
+}
+
+/* ─────────────────────────────────────────────
+   NEXT QUESTION / FINISH
+───────────────────────────────────────────── */
+function nextQuestion() {
+  currentIdx++;
+  if (currentIdx >= TOTAL) {
+    finishQuiz();
+  } else {
+    document.getElementById('questionCard').style.animation = 'none';
+    requestAnimationFrame(() => {
+      document.getElementById('questionCard').style.animation = '';
+      renderQuestion();
+    });
+  }
+}
+
+async function finishQuiz() {
+  // Tell the server the final score
+  try {
+    await fetch('php/quiz.php', {
+      method: 'POST',
+      body: new URLSearchParams({
+        action:     'finish',
+        session_id: session.session_id,
+        score:      score
+      })
+    });
+  } catch(e) {}
+
+  // Hide quiz, show completion
+  hide('progressSection');
+  hide('questionCard');
+  hide('feedbackBar');
+
+  // Fill in completion screen
+  const pct   = Math.round((score / TOTAL) * 100);
+  const stars  = pct === 100 ? '⭐⭐⭐⭐⭐'
+               : pct >= 80  ? '⭐⭐⭐⭐'
+               : pct >= 60  ? '⭐⭐⭐'
+               : pct >= 40  ? '⭐⭐'
+               : '⭐';
+  const title  = pct === 100 ? 'Perfect Score! 🏆'
+               : pct >= 80  ? 'Superstar! 🌟'
+               : pct >= 60  ? 'Well Done! 💛'
+               : 'Good Try! 🐝';
+  const msg    = pct === 100
+    ? `${session.childName} got every single one right! Genius level unlocked! 🧠`
+    : score === 0
+    ? `Don't worry — every quiz makes you smarter. Try again! 💪`
+    : `${session.childName} got ${score} out of ${TOTAL}! Keep practising — you're getting there! 🌱`;
+
+  document.getElementById('doneTitle').textContent  = title;
+  document.getElementById('doneChild').textContent  = `Great job, ${session.childName}! 🎊`;
+  document.getElementById('scoreNumber').textContent = `${score}/${TOTAL}`;
+  document.getElementById('doneStars').textContent   = stars;
+  document.getElementById('doneMessage').textContent = msg;
+
+  // Progress bar to 100%
+  document.getElementById('progFill').style.width = '100%';
+  for (let i = 0; i < TOTAL; i++) {
+    const b = document.getElementById('pb' + i);
+    if (b) b.classList.add('done');
+  }
+
+  // Build per-question breakdown
+  const breakdown = document.getElementById('doneBreakdown');
+  breakdown.innerHTML = resultLog.map((r, i) => `
+    <div class="breakdown-row ${r.correct ? 'correct-row' : 'wrong-row'}">
+      <span class="breakdown-icon">${r.correct ? '✅' : '❌'}</span>
+      <span class="breakdown-q">Q${i + 1}: ${r.questionText}</span>
+      <span class="breakdown-ans">${r.yourAnswer}</span>
+    </div>`).join('');
+
+  spawnConfetti();
+  show('completionScreen');
+
+  // Clear session so refreshing doesn't replay the same quiz
+  sessionStorage.removeItem('quizSession');
+}
+
+/* ─────────────────────────────────────────────
+   PLAY AGAIN — go back to dashboard to pick new quiz
+───────────────────────────────────────────── */
+function playAgain() {
+  window.location.href = 'dashboard.html';
+}
+
+/* ─────────────────────────────────────────────
+   HELPERS
+───────────────────────────────────────────── */
+function praise() {
+  return PRAISE[Math.floor(Math.random() * PRAISE.length)];
+}
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function show(id) { document.getElementById(id).classList.remove('hidden'); }
+function hide(id) { document.getElementById(id).classList.add('hidden'); }
+
+function spawnConfetti() {
+  const wrap = document.getElementById('confettiWrap');
+  wrap.innerHTML = '';
+  for (let i = 0; i < 70; i++) {
+    const p = document.createElement('div');
+    p.className = 'confetti-piece';
+    p.style.cssText = `
+      left:${Math.random()*100}%;
+      background:${CONF_CLR[Math.floor(Math.random()*CONF_CLR.length)]};
+      width:${6+Math.random()*8}px;
+      height:${6+Math.random()*8}px;
+      border-radius:${Math.random()>.5?'50%':'2px'};
+      animation-duration:${1.8+Math.random()*2.2}s;
+      animation-delay:${Math.random()*1}s;
+    `;
+    wrap.appendChild(p);
+  }
+}
+</script>
+</body>
+</html>

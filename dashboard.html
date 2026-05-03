@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>QuizzyBee 🐝 — Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Boogaloo&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* ═══ PAGE BASE ═══ */
+    body {
+      background: var(--cream);
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* ═══ BACKGROUND BLOBS (matches landing hero) ═══ */
+    .page-blobs {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.35;
+    }
+    .blob-1 { width: 500px; height: 500px; background: var(--honey);   top: -120px; right: -100px; }
+    .blob-2 { width: 380px; height: 380px; background: var(--teal);    bottom: 10%; left: -80px; }
+    .blob-3 { width: 260px; height: 260px; background: var(--coral);   top: 40%;   left: 35%; }
+    .blob-4 { width: 280px; height: 280px; background: var(--lavender);bottom: 20%; right: 10%; }
+
+    /* everything above blobs */
+    .navbar, .dash-body { position: relative; z-index: 1; }
+
+    /* ═══ NAVBAR ═══ */
+    .navbar {
+      position: sticky; top: 0; z-index: 900;
+      background: rgba(255,251,240,.93);
+      backdrop-filter: blur(14px);
+      border-bottom: 2px solid #f5e4b0;
+      box-shadow: var(--shadow);
+    }
+    .nav-wrap {
+      max-width: 1080px; margin: 0 auto; padding: 0 24px;
+      display: flex; align-items: center; gap: 20px; height: 66px;
+    }
+    .nav-right {
+      margin-left: auto;
+      display: flex; align-items: center; gap: 14px;
+    }
+    .welcome-chip {
+      display: flex; align-items: center; gap: 8px;
+      background: var(--honey-lt);
+      border: 1.5px solid var(--honey);
+      border-radius: var(--r-xl);
+      padding: 6px 16px;
+      font-weight: 800; font-size: 14px; color: var(--honey-dk);
+    }
+    .btn-logout {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: transparent;
+      border: 2px solid #e0c870;
+      color: var(--honey-dk);
+      font-family: var(--font-b); font-weight: 700; font-size: 14px;
+      padding: 9px 20px; border-radius: var(--r-xl);
+      cursor: pointer; transition: background .2s;
+    }
+    .btn-logout:hover { background: var(--honey-lt); }
+
+    /* ═══ DASH BODY ═══ */
+    .dash-body {
+      max-width: 1080px; margin: 0 auto;
+      padding: 40px 24px 80px;
+    }
+
+    /* ── Page title row ── */
+    .page-title-row {
+      display: flex; align-items: center; gap: 16px;
+      margin-bottom: 36px;
+    }
+    .page-mascot {
+      font-size: 58px;
+      animation: mascot-fly 6s ease-in-out infinite;
+    }
+    .page-title-text h1 {
+      font-family: var(--font-h);
+      font-size: clamp(28px, 4vw, 42px);
+      color: var(--ink); line-height: 1.1; margin-bottom: 4px;
+    }
+    .page-title-text p { font-size: 16px; color: #7a5c20; }
+
+    /* ═══ TWO-COLUMN GRID ═══ */
+    .dash-grid {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 28px;
+      align-items: start;
+    }
+    @media(max-width: 860px) {
+      .dash-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ═══ CARDS ═══ */
+    .dash-card {
+      background: var(--white);
+      border-radius: var(--r-lg);
+      border: 2.5px solid #f0dea0;
+      box-shadow: var(--shadow-md);
+      overflow: hidden;
+    }
+
+    .card-header {
+      background: linear-gradient(135deg, var(--honey-lt) 0%, #fff9e6 100%);
+      border-bottom: 2px solid #f0dea0;
+      padding: 18px 24px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .card-header-icon { font-size: 28px; }
+    .card-header h2 {
+      font-family: var(--font-h);
+      font-size: 22px; color: var(--ink); margin: 0;
+    }
+    .card-header p { font-size: 13px; color: #9a7840; margin: 2px 0 0; }
+    .card-body { padding: 22px 24px; }
+
+    /* ═══ STATUS BANNER ═══ */
+    .status-banner {
+      border-radius: var(--r-sm);
+      padding: 11px 16px;
+      font-weight: 700; font-size: 14px;
+      margin-bottom: 14px;
+      display: none;
+      animation: rise .3s ease;
+      align-items: center; gap: 8px;
+    }
+    .status-banner.success { background: var(--green-lt); color: #1f7a35; display: flex; }
+    .status-banner.error   { background: var(--coral-lt); color: #b02020; display: flex; }
+    .status-banner.info    { background: var(--sky);       color: #1a5080; display: flex; }
+
+    /* ═══ CHILD PROFILES ═══ */
+    .child-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 18px; }
+
+    .child-card {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 13px 16px;
+      background: var(--honey-lt);
+      border: 2px solid #f0d88a;
+      border-radius: var(--r-md);
+      cursor: pointer;
+      transition: all .2s;
+    }
+    .child-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 5px 0 #e0c860;
+      border-color: var(--honey);
+    }
+    .child-card.active {
+      background: var(--honey);
+      border-color: var(--honey-dk);
+      box-shadow: 0 5px 0 var(--honey-dk);
+      transform: translateY(-2px);
+    }
+    .child-card-left { display: flex; align-items: center; gap: 10px; }
+    .child-avatar {
+      width: 40px; height: 40px;
+      background: var(--white);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; font-family: var(--font-h);
+      font-weight: 800; color: var(--honey-dk);
+      border: 2px solid rgba(255,255,255,.5);
+    }
+    .child-card.active .child-avatar { background: rgba(255,255,255,.25); color: var(--white); }
+    .child-info-name { font-weight: 800; font-size: 15px; color: var(--ink); }
+    .child-info-age  { font-size: 12px; color: #9a7840; }
+    .child-card.active .child-info-name,
+    .child-card.active .child-info-age { color: var(--white); }
+
+    .no-children {
+      text-align: center; padding: 24px 0 14px;
+      color: #b09050; font-size: 15px; line-height: 1.8;
+    }
+    .no-children .no-ch-icon { font-size: 36px; display: block; margin-bottom: 8px; }
+
+    /* ── Add child form ── */
+    .add-child-divider {
+      display: flex; align-items: center; gap: 10px; margin: 16px 0 14px;
+    }
+    .add-child-divider hr { flex: 1; border: none; border-top: 1.5px solid #f0dea0; }
+    .add-child-divider span {
+      font-size: 12px; font-weight: 800; color: #b09050;
+      text-transform: uppercase; letter-spacing: .08em; white-space: nowrap;
+    }
+    .add-form { display: flex; flex-direction: column; gap: 10px; }
+    .add-form input {
+      width: 100%; padding: 11px 14px;
+      border: 2px solid #e8d898;
+      border-radius: var(--r-sm);
+      font-family: var(--font-b); font-size: 15px;
+      background: var(--honey-lt);
+      transition: border-color .2s, background .2s;
+    }
+    .add-form input:focus { outline: none; border-color: var(--honey); background: var(--white); }
+    .add-form input::placeholder { color: #c0a868; }
+
+    /* ═══ CATEGORY TILES ═══ */
+    .cat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(108px, 1fr));
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .cat-tile {
+      padding: 18px 8px 14px;
+      border-radius: var(--r-md);
+      border: 2.5px solid #e8d898;
+      background: var(--honey-lt);
+      font-family: var(--font-h); font-size: 15px; color: var(--ink);
+      cursor: pointer; text-align: center;
+      transition: all .2s;
+      box-shadow: 0 4px 0 #e0c870;
+    }
+    .cat-tile:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 0 #e0c870;
+      border-color: var(--honey);
+    }
+    .cat-tile.selected {
+      background: var(--honey);
+      border-color: var(--honey-dk);
+      color: var(--white);
+      box-shadow: 0 5px 0 var(--honey-dk);
+      transform: translateY(-2px);
+    }
+    .cat-tile .cat-emoji { font-size: 32px; display: block; margin-bottom: 8px; }
+
+    /* ── Quiz hint bar ── */
+    .quiz-hint {
+      background: var(--sky);
+      border: 1.5px solid #b8daf0;
+      border-radius: var(--r-sm);
+      padding: 12px 16px;
+      font-size: 14px; font-weight: 700; color: #2060a0;
+      margin-bottom: 20px;
+      display: flex; align-items: center; gap: 10px;
+    }
+
+    /* ── Big start button ── */
+    .btn-start {
+      display: flex; align-items: center; justify-content: center; gap: 12px;
+      width: 100%;
+      background: var(--honey); color: var(--white);
+      font-family: var(--font-h); font-size: 22px;
+      padding: 18px 36px;
+      border-radius: var(--r-xl); border: none; cursor: pointer;
+      box-shadow: 0 7px 0 var(--honey-dk);
+      transition: transform .15s, box-shadow .15s;
+    }
+    .btn-start:hover:not(:disabled) { transform: translateY(-4px); box-shadow: 0 11px 0 var(--honey-dk); }
+    .btn-start:active:not(:disabled){ transform: translateY(3px);  box-shadow: 0 3px 0 var(--honey-dk); }
+    .btn-start:disabled {
+      background: #d8c898; box-shadow: 0 5px 0 #c0ae80;
+      cursor: not-allowed; opacity: .75;
+    }
+
+    /* ═══ HISTORY TABLE ═══ */
+    .history-empty {
+      text-align: center; padding: 28px 0;
+      color: #b09050; font-size: 15px;
+    }
+    .history-empty .empty-icon { font-size: 40px; display: block; margin-bottom: 10px; }
+
+    .history-table { width: 100%; border-collapse: collapse; }
+    .history-table thead tr { background: var(--honey-lt); }
+    .history-table th {
+      text-align: left; padding: 11px 16px;
+      font-size: 12px; font-weight: 900;
+      text-transform: uppercase; letter-spacing: .08em;
+      color: var(--honey-dk);
+    }
+    .history-table td {
+      padding: 13px 16px;
+      border-bottom: 1.5px solid #f5ebc8;
+      font-size: 15px;
+    }
+    .history-table tr:last-child td { border-bottom: none; }
+    .history-table tbody tr:hover { background: var(--honey-lt); }
+
+    .score-pill {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 4px 14px; border-radius: var(--r-xl);
+      font-family: var(--font-h); font-size: 15px;
+    }
+    .score-5   { background: var(--green-lt); color: #1f7a35; border: 1.5px solid #8ad8a0; }
+    .score-4   { background: #e0eeff;          color: #1840a0; border: 1.5px solid #90b8f0; }
+    .score-3   { background: var(--honey-lt);  color: var(--honey-dk); border: 1.5px solid var(--honey); }
+    .score-low { background: var(--coral-lt);  color: #b02020; border: 1.5px solid #f0a0a0; }
+
+    .cat-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--sky); border-radius: var(--r-xl);
+      padding: 4px 12px; font-size: 14px; font-weight: 700; color: #205080;
+    }
+
+    /* ═══ SHIMMER LOADING ═══ */
+    .shimmer {
+      background: linear-gradient(90deg, #f5e8b8 25%, #fdf5d8 50%, #f5e8b8 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s infinite;
+      border-radius: var(--r-sm); height: 48px; margin-bottom: 10px;
+    }
+    @keyframes shimmer { to { background-position: -200% 0; } }
+
+    /* ═══ MISC ═══ */
+    @keyframes rise { from { opacity:0;transform:translateY(8px); } to { opacity:1;transform:translateY(0); } }
+    .section-gap { margin-top: 24px; }
+
+    /* Floating bees */
+    .floaty-bee {
+      position: fixed; font-size: 28px; pointer-events: none; z-index: 0;
+      animation: floaty-anim 6s ease-in-out infinite; opacity: .15;
+    }
+    .floaty-bee.f1 { top: 22%; left: 3%;  animation-delay: 0s; }
+    .floaty-bee.f2 { top: 62%; right: 2%; animation-delay: 2s; }
+    .floaty-bee.f3 { top: 82%; left: 7%;  animation-delay: 4s; font-size: 20px; }
+  </style>
+</head>
+<body>
+
+<!-- ═══ BACKGROUND BLOBS ═══ -->
+<div class="page-blobs">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+  <div class="blob blob-4"></div>
+</div>
+
+<!-- Floating bees -->
+<div class="floaty-bee f1">🐝</div>
+<div class="floaty-bee f2">🐝</div>
+<div class="floaty-bee f3">🐝</div>
+
+<!-- ═══ NAVBAR ═══ -->
+<nav class="navbar">
+  <div class="nav-wrap">
+    <a href="index.html" class="logo">
+      <div class="logo-bee">🐝</div>
+      <span>QuizzyBee</span>
+    </a>
+    <div class="nav-right">
+      <div class="welcome-chip">
+        👋 Hi, <span id="welcomeName" style="margin-left:4px">Parent</span>!
+      </div>
+      <button class="btn-logout" onclick="logout()">Log Out 👋</button>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══ DASH BODY ═══ -->
+<div class="dash-body">
+
+  <!-- Page heading -->
+  <div class="page-title-row">
+    <div class="page-mascot">🐝</div>
+    <div class="page-title-text">
+      <h1>Parent Dashboard</h1>
+      <p>Pick a child, choose a topic, and let the learning begin! 🚀</p>
+    </div>
+  </div>
+
+  <!-- Grid -->
+  <div class="dash-grid">
+
+    <!-- ══ LEFT: Child Profiles ══ -->
+    <aside>
+      <div class="dash-card">
+        <div class="card-header">
+          <div class="card-header-icon">👦</div>
+          <div>
+            <h2>Child Profiles</h2>
+            <p>Select who's playing today</p>
+          </div>
+        </div>
+        <div class="card-body">
+
+          <div id="statusBanner" class="status-banner"></div>
+
+          <div class="child-list" id="childList">
+            <div class="shimmer"></div>
+            <div class="shimmer" style="height:36px;opacity:.5"></div>
+          </div>
+
+          <div class="add-child-divider">
+            <hr /><span>✨ Add a child</span><hr />
+          </div>
+
+          <div class="add-form">
+            <input type="text"   id="childNameInput" placeholder="👦 Child's name"  maxlength="50" />
+            <input type="number" id="childAgeInput"  placeholder="🎂 Age (1–5)"    min="1" max="12" />
+            <button class="btn-honey btn-full" onclick="addChild()" style="font-size:16px;padding:13px 28px">
+              Save Profile 🐝
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </aside>
+
+    <!-- ══ RIGHT: Quiz launcher + History ══ -->
+    <section>
+
+      <!-- Quiz launcher -->
+      <div class="dash-card">
+        <div class="card-header">
+          <div class="card-header-icon">🎮</div>
+          <div>
+            <h2>Start a Quiz</h2>
+            <p id="quizSubtitle">Select a child, then pick a topic below</p>
+          </div>
+        </div>
+        <div class="card-body">
+
+          <div class="quiz-hint" id="quizHint">
+            🐝 First, select a child on the left — then choose a topic!
+          </div>
+
+          <div class="cat-grid" id="catGrid">
+            <div class="shimmer" style="height:90px"></div>
+            <div class="shimmer" style="height:90px;opacity:.7"></div>
+            <div class="shimmer" style="height:90px;opacity:.5"></div>
+            <div class="shimmer" style="height:90px;opacity:.35"></div>
+            <div class="shimmer" style="height:90px;opacity:.2"></div>
+          </div>
+
+          <button class="btn-start" id="startBtn" onclick="startQuiz()" disabled>
+            🚀 Start Quiz!
+          </button>
+
+        </div>
+      </div>
+
+      <!-- History -->
+      <div class="dash-card section-gap">
+        <div class="card-header">
+          <div class="card-header-icon">📊</div>
+          <div>
+            <h2>Quiz History</h2>
+            <p>Recent scores for the selected child</p>
+          </div>
+        </div>
+        <div class="card-body" id="historyBody">
+          <div class="history-empty">
+            <span class="empty-icon">🐝</span>
+            Select a child to see their quiz history!
+          </div>
+        </div>
+      </div>
+
+    </section>
+  </div>
+</div>
+
+<script>
+const CAT_ICONS = { Animals:'🐾', Colors:'🎨', Shapes:'🔷', Numbers:'🔢', Fruits:'🍎' };
+const SCORE_MSG = { 5:'🏆 Perfect!', 4:'🌟 Great!', 3:'💛 Good!', 2:'💪 Keep going!', 1:'🤗 Try again!' };
+
+let selectedChildId   = null;
+let selectedChildName = null;
+let selectedCatId     = null;
+
+document.addEventListener('DOMContentLoaded', async () => {
+  await loadChildren();
+  await loadCategories();
+});
+
+function showStatus(msg, type = 'info') {
+  const el = document.getElementById('statusBanner');
+  const icons = { success:'✅', error:'⚠️', info:'💛' };
+  el.innerHTML = `<span>${icons[type]}</span> ${msg}`;
+  el.className = 'status-banner ' + type;
+  clearTimeout(el._t);
+  el._t = setTimeout(() => { el.className = 'status-banner'; }, 4000);
+}
+
+async function logout() {
+  try {
+    await fetch('php/auth.php', {
+      method: 'POST', body: new URLSearchParams({ action: 'logout' })
+    });
+  } catch(e) {}
+  window.location.href = 'index.html';
+}
+
+async function loadChildren() {
+  try {
+    const res  = await fetch('php/auth.php?action=get_children');
+    if (res.status === 401) { window.location.href = 'index.html'; return; }
+    const data = await res.json();
+    const list = document.getElementById('childList');
+    list.innerHTML = '';
+
+    if (!data.children || data.children.length === 0) {
+      list.innerHTML = `<div class="no-children">
+        <span class="no-ch-icon">👦</span>
+        No profiles yet!<br>Add your first child below 👇
+      </div>`;
+      return;
+    }
+
+    data.children.forEach(child => {
+      const card      = document.createElement('div');
+      card.className  = 'child-card';
+      card.dataset.id = child.id;
+      const initial   = child.name.charAt(0).toUpperCase();
+      card.innerHTML  = `
+        <div class="child-card-left">
+          <div class="child-avatar">${initial}</div>
+          <div>
+            <div class="child-info-name">${child.name}</div>
+            <div class="child-info-age">Age ${child.age} 🎂</div>
+          </div>
+        </div>
+        <span style="font-size:18px;opacity:.5">▶</span>`;
+      card.onclick = () => selectChild(child.id, child.name, card);
+      list.appendChild(card);
+    });
+  } catch(e) {
+    document.getElementById('childList').innerHTML =
+      '<div class="no-children"><span class="no-ch-icon">⚠️</span>Could not load profiles.</div>';
+  }
+}
+
+function selectChild(id, name, el) {
+  selectedChildId   = id;
+  selectedChildName = name;
+  document.querySelectorAll('.child-card').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('quizSubtitle').textContent = `Playing as: ${name} 🎯`;
+  document.getElementById('quizHint').innerHTML =
+    `🐝 Great! Now pick a topic for <strong>${name}</strong>!`;
+  updateStartBtn();
+  loadHistory(id);
+}
+
+async function addChild() {
+  const name = document.getElementById('childNameInput').value.trim();
+  const age  = parseInt(document.getElementById('childAgeInput').value, 10);
+  if (!name)                       { showStatus('Please enter a name!', 'error'); return; }
+  if (!age || age < 1 || age > 12) { showStatus('Age must be between 1 and 12!', 'error'); return; }
+
+  try {
+    const res  = await fetch('php/auth.php', {
+      method: 'POST',
+      body: new URLSearchParams({ action:'add_child', child_name:name, child_age:age })
+    });
+    const data = await res.json();
+    if (data.status === 'success') {
+      document.getElementById('childNameInput').value = '';
+      document.getElementById('childAgeInput').value  = '';
+      showStatus(`${name} added! 🎉`, 'success');
+      await loadChildren();
+    } else {
+      showStatus(data.message || 'Could not add child.', 'error');
+    }
+  } catch(e) { showStatus('Server error. Please try again.', 'error'); }
+}
+
+async function loadCategories() {
+  try {
+    const res  = await fetch('php/quiz.php?action=categories');
+    const data = await res.json();
+    const grid = document.getElementById('catGrid');
+    grid.innerHTML = '';
+    (data.categories || []).forEach(cat => {
+      const tile      = document.createElement('button');
+      tile.className  = 'cat-tile';
+      tile.dataset.id = cat.id;
+      tile.innerHTML  = `<span class="cat-emoji">${CAT_ICONS[cat.name]||'📚'}</span>${cat.name}`;
+      tile.onclick    = () => selectCategory(cat.id, tile);
+      grid.appendChild(tile);
+    });
+  } catch(e) {
+    document.getElementById('catGrid').innerHTML =
+      '<p style="color:#b09050;font-size:14px;padding:8px 0">Could not load categories.</p>';
+  }
+}
+
+function selectCategory(id, el) {
+  selectedCatId = id;
+  document.querySelectorAll('.cat-tile').forEach(t => t.classList.remove('selected'));
+  el.classList.add('selected');
+  updateStartBtn();
+}
+
+function updateStartBtn() {
+  const btn    = document.getElementById('startBtn');
+  btn.disabled = !(selectedChildId && selectedCatId);
+  btn.innerHTML = btn.disabled
+    ? '🚀 Start Quiz!'
+    : `🚀 Start Quiz for ${selectedChildName}!`;
+}
+
+async function startQuiz() {
+  if (!selectedChildId || !selectedCatId) return;
+  const btn     = document.getElementById('startBtn');
+  btn.disabled  = true;
+  btn.innerHTML = '⏳ Loading quiz…';
+
+  try {
+    const res  = await fetch(
+      `php/quiz.php?action=start_quiz&cat=${selectedCatId}&child=${selectedChildId}`
+    );
+    const data = await res.json();
+    if (data.status === 'success') {
+      sessionStorage.setItem('quizSession', JSON.stringify({
+        session_id: data.session_id,
+        questions:  data.questions,
+        childName:  selectedChildName
+      }));
+      window.location.href = 'quiz.html';
+    } else {
+      showStatus('⚠️ ' + (data.message || 'Could not start quiz.'), 'error');
+      btn.disabled  = false;
+      btn.innerHTML = `🚀 Start Quiz for ${selectedChildName}!`;
+    }
+  } catch(e) {
+    showStatus('Server error. Please try again.', 'error');
+    btn.disabled  = false;
+    btn.innerHTML = `🚀 Start Quiz for ${selectedChildName}!`;
+  }
+}
+
+async function loadHistory(childId) {
+  const body = document.getElementById('historyBody');
+  body.innerHTML = '<div class="shimmer"></div><div class="shimmer" style="opacity:.5;height:36px"></div>';
+
+  try {
+    const res  = await fetch(`php/quiz.php?action=history&child_id=${childId}`);
+    const data = await res.json();
+
+    if (!data.sessions || data.sessions.length === 0) {
+      body.innerHTML = `<div class="history-empty">
+        <span class="empty-icon">🎮</span>No quizzes yet — go play one!
+      </div>`;
+      return;
+    }
+
+    body.innerHTML = `
+      <table class="history-table">
+        <thead><tr><th>Topic</th><th>Score</th><th>Date</th></tr></thead>
+        <tbody>
+          ${data.sessions.map(s => {
+            const cls  = s.score===5?'score-5':s.score===4?'score-4':s.score===3?'score-3':'score-low';
+            const icon = CAT_ICONS[s.category] || '📚';
+            const msg  = SCORE_MSG[s.score] || '🐝';
+            const date = new Date(s.created_at).toLocaleDateString('en-US',
+              { month:'short', day:'numeric', year:'numeric' });
+            return `<tr>
+              <td><span class="cat-badge">${icon} ${s.category}</span></td>
+              <td><span class="score-pill ${cls}">${s.score}/5 &nbsp;${msg}</span></td>
+              <td style="color:#9a7840;font-size:14px">${date}</td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>`;
+  } catch(e) {
+    body.innerHTML = '<div class="history-empty"><span class="empty-icon">⚠️</span>Could not load history.</div>';
+  }
+}
+</script>
+</body>
+</html>
